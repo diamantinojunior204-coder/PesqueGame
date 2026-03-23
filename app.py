@@ -5,14 +5,14 @@ app = Flask(__name__)
 app.secret_key = "fishbet_secret"
 
 CUSTO = 5
-
 peixes = [
-    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "https://i.imgur.com/6X4J7kC.png"},
-    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "https://i.imgur.com/8Qf7Z9W.png"},
-    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "https://i.imgur.com/3ZQ3Z6L.png"},
-    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "https://i.imgur.com/5ZQZQ8F.png"},
-    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "https://i.imgur.com/WYFQF9X.png"},
+    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "/static/peixes/tilapia.jpg"},
+    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "/static/peixes/lambari.jpg"},
+    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "/static/peixes/baiacu.jpg"},
+    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "/static/peixes/dourado.jpg"},
+    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "/static/peixes/tubarao.jpg"},
 ]
+
 
 def sortear():
     s = random.randint(1,100)
