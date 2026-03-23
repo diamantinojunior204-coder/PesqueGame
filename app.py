@@ -1,10 +1,10 @@
 from flask import Flask, render_template_string, jsonify, session
 import random
 
-app = Flask(__name__)
-app.secret_key = "fishbet_secret"
-app = Flask(__name__, static_folder="static")
 
+
+app = Flask(__name__, static_folder="static")
+app.secret_key = "fishbet_secret"
 CUSTO = 5
 peixes = [
     {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "static/peixes/tilapia.jpg"},
