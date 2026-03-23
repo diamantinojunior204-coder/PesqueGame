@@ -3,6 +3,7 @@ import random
 
 app = Flask(__name__)
 app.secret_key = "fishbet_secret"
+app = Flask(__name__, static_folder="static")
 
 CUSTO = 5
 peixes = [
