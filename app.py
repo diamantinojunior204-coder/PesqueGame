@@ -10,11 +10,11 @@ app.secret_key = "fishbet_secret"
 CUSTO_PESCARIA = 5
 
 peixes = [
-    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "/static/peixes/tilapia.png"},
-    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "/static/peixes/lambari.png"},
-    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "/static/peixes/baiacu.png"},
-    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "/static/peixes/dourado.png"},
-    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "/static/peixes/tubarao.png"},
+    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "/static/peixes/tilapia.jpg"},
+    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "/static/peixes/lambari.jpg"},
+    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "/static/peixes/baiacu.jpg"},
+    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "/static/peixes/dourado.jpg"},
+    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "/static/peixes/tubarao.jpg"},
 ]
 
 # =========================
