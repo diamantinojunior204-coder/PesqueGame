@@ -4,54 +4,40 @@ import random
 app = Flask(__name__)
 app.secret_key = "fishbet_secret"
 
-# =========================
-# CONFIG
-# =========================
-CUSTO_PESCARIA = 5
+CUSTO = 5
 
 peixes = [
-    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "/static/peixes/tilapia.jpg"},
-    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "/static/peixes/lambari.jpg"},
-    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "/static/peixes/baiacu.jpg"},
-    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "/static/peixes/dourado.jpg"},
-    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "/static/peixes/tubarao.jpg"},
+    {"nome": "Tilápia", "valor": 2, "chance": 40, "img": "https://i.imgur.com/6X4J7kC.png"},
+    {"nome": "Lambari", "valor": 4, "chance": 30, "img": "https://i.imgur.com/8Qf7Z9W.png"},
+    {"nome": "Baiacu", "valor": 6, "chance": 20, "img": "https://i.imgur.com/3ZQ3Z6L.png"},
+    {"nome": "Dourado", "valor": 10, "chance": 9, "img": "https://i.imgur.com/5ZQZQ8F.png"},
+    {"nome": "Tubarão", "valor": 50, "chance": 1, "img": "https://i.imgur.com/WYFQF9X.png"},
 ]
 
-# =========================
-# FUNÇÃO DE SORTEIO
-# =========================
-def sortear_peixe():
-    sorte = random.randint(1, 100)
-    acumulado = 0
+def sortear():
+    s = random.randint(1,100)
+    acum = 0
+    for p in peixes:
+        acum += p["chance"]
+        if s <= acum:
+            return p
 
-    for peixe in peixes:
-        acumulado += peixe["chance"]
-        if sorte <= acumulado:
-            return peixe
-
-# =========================
-# ROTAS
-# =========================
 @app.route("/")
 def index():
     if "saldo" not in session:
-        session["saldo"] = 100  # saldo inicial
-
+        session["saldo"] = 100
     return render_template_string(html)
 
 @app.route("/api/pescar")
 def pescar():
-    saldo = session.get("saldo", 0)
+    saldo = session.get("saldo",0)
 
-    if saldo < CUSTO_PESCARIA:
-        return jsonify({"erro": "Saldo insuficiente!"})
+    if saldo < CUSTO:
+        return jsonify({"erro":"Sem saldo!"})
 
-    peixe = sortear_peixe()
+    peixe = sortear()
 
-    # desconta aposta
-    saldo -= CUSTO_PESCARIA
-
-    # soma prêmio
+    saldo -= CUSTO
     saldo += peixe["valor"]
 
     session["saldo"] = saldo
@@ -63,104 +49,148 @@ def pescar():
         "saldo": saldo
     })
 
-# =========================
-# HTML + CSS + JS
-# =========================
 html = """
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>🎣 FishBet</title>
+<title>FishBet</title>
 
 <style>
 body{
-    margin:0;
-    font-family: Arial;
-    background: linear-gradient(#4facfe, #00f2fe);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    color:white;
+margin:0;
+font-family:Arial;
+background:linear-gradient(#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
 }
 
 .game{
-    text-align:center;
-    background: rgba(0,0,0,0.4);
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 0 20px rgba(0,0,0,0.5);
+text-align:center;
+background:rgba(0,0,0,0.4);
+padding:25px;
+border-radius:20px;
+}
+
+.lago{
+width:250px;
+height:150px;
+background:radial-gradient(circle,#00c6ff,#0072ff);
+border-radius:50%;
+margin:20px auto;
+position:relative;
+overflow:hidden;
+}
+
+.lago::after{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+top:-50%;
+left:-50%;
+background:repeating-radial-gradient(circle,rgba(255,255,255,0.2)0px,rgba(255,255,255,0.2)2px,transparent 3px,transparent 20px);
+animation:agua 3s linear infinite;
+}
+
+@keyframes agua{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+#linha{
+width:2px;
+height:0;
+background:white;
+position:absolute;
+top:0;
+left:50%;
+transition:0.5s;
+}
+
+#peixe{
+width:120px;
+opacity:0;
+transform:scale(0.5);
+transition:0.5s;
+margin-top:10px;
+}
+
+.show{
+opacity:1;
+transform:scale(1.2);
 }
 
 button{
-    padding:15px 30px;
-    font-size:18px;
-    border:none;
-    border-radius:10px;
-    background: gold;
-    cursor:pointer;
-    font-weight:bold;
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:gold;
+cursor:pointer;
 }
 
-button:hover{
-    transform: scale(1.1);
-}
-
-img{
-    width:120px;
-    margin:20px;
-}
-
-#resultado{
-    margin-top:10px;
-    font-size:18px;
-}
 </style>
-
 </head>
+
 <body>
 
 <div class="game">
-    <h1>🎣 FishBet</h1>
-    <h3>Saldo: R$ <span id="saldo">100</span></h3>
+<h1>🎣 FishBet</h1>
+<h3>Saldo: R$ <span id="saldo">100</span></h3>
 
-    <img id="peixe" src="">
+<div class="lago">
+<div id="linha"></div>
+</div>
 
-    <br>
-    <button onclick="pescar()">PESCAR 🎣 (R$5)</button>
+<img id="peixe">
 
-    <p id="resultado"></p>
+<br><br>
+<button onclick="pescar()">PESCAR 🎣 (R$5)</button>
+
+<p id="resultado"></p>
 </div>
 
 <script>
 function pescar(){
-    const resultado = document.getElementById("resultado");
-    const img = document.getElementById("peixe");
+let res = document.getElementById("resultado");
+let img = document.getElementById("peixe");
+let linha = document.getElementById("linha");
 
-    resultado.innerText = "🎣 Lançando linha...";
-    img.src = "";
+res.innerText = "🎣 Jogando linha...";
+img.classList.remove("show");
+img.src = "";
 
-    setTimeout(() => {
-        fetch("/api/pescar")
-        .then(r => r.json())
-        .then(data => {
+linha.style.height = "120px";
 
-            if(data.erro){
-                resultado.innerText = data.erro;
-                return;
-            }
+setTimeout(()=>{
+res.innerText = "💧 Algo puxou...";
+},1000);
 
-            img.src = data.img;
+setTimeout(()=>{
+fetch("/api/pescar")
+.then(r=>r.json())
+.then(d=>{
 
-            resultado.innerText =
-                "Você pescou: " + data.nome +
-                " 🐟 e ganhou R$" + data.valor;
+if(d.erro){
+res.innerText = d.erro;
+linha.style.height="0";
+return;
+}
 
-            document.getElementById("saldo").innerText = data.saldo;
-        });
+linha.style.height="0";
 
-    }, 2000);
+img.src = d.img;
+img.classList.add("show");
+
+res.innerText = "🐟 "+d.nome+" - R$"+d.valor;
+document.getElementById("saldo").innerText = d.saldo;
+
+});
+},2000);
 }
 </script>
 
@@ -168,7 +198,5 @@ function pescar(){
 </html>
 """
 
-# =========================
-#app.run(debug=True)
 if __name__ == "__main__":
     app.run()
