@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini PG Teste</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#0f172a;
+    font-family:Arial;
+    color:white;
+}
+
+.container{
+    text-align:center;
+}
+
+#grafico{
+    width:320px;
+    height:160px;
+    background:linear-gradient(180deg,#1a1a2e,#16213e);
+    border-radius:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 0 20px gold;
+    margin-bottom:20px;
+    transition:0.3s;
+}
+
+#valor{
+    font-size:36px;
+    color:gold;
+    text-shadow:0 0 10px yellow;
+}
+
+button{
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:gold;
+    color:black;
+    cursor:pointer;
+    box-shadow:0 0 10px gold;
+}
+
+button:hover{
+    transform:scale(1.1);
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <div id="grafico">
+        <div id="valor">R$ 0.00</div>
+    </div>
+
+    <button onclick="jogar()">GIRAR 🎰</button>
+</div>
+
+<script>
+function animarGanho(valorFinal){
+    let atual = 0;
+
+    let intervalo = setInterval(()=>{
+        atual += valorFinal / 40;
+
+        if(atual >= valorFinal){
+            atual = valorFinal;
+            clearInterval(intervalo);
+        }
+
+        document.getElementById("valor").innerText =
+            "R$ " + atual.toFixed(2);
+    }, 30);
+}
+
+function bigWin(){
+    let el = document.getElementById("grafico");
+
+    el.style.boxShadow = "0 0 50px gold";
+    el.style.transform = "scale(1.1)";
+
+    setTimeout(()=>{
+        el.style.boxShadow = "0 0 20px gold";
+        el.style.transform = "scale(1)";
+    },800);
+}
+
+function jogar(){
+    let valor = Math.random() * 200;
+
+    animarGanho(valor);
+
+    if(valor > 120){
+        bigWin();
+    }
+}
+</script>
+
+</body>
+</html>
