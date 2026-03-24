@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Mini Slot PG</title>
+
+<style>
+body{
+    background:#0f172a;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Arial;
+}
+
+.container{
+    text-align:center;
+}
+
+.slots{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.slot{
+    width:100px;
+    height:100px;
+    background:#1a1a2e;
+    border-radius:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-shadow:0 0 10px gold;
+    overflow:hidden;
+}
+
+.slot img{
+    width:80px;
+    transition:0.2s;
+}
+
+#grafico{
+    margin:15px;
+    font-size:28px;
+    color:gold;
+    text-shadow:0 0 10px yellow;
+}
+
+button{
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    background:gold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="slots">
+        <div class="slot"><img id="s1" src="/static/img/tigre.png"></div>
+        <div class="slot"><img id="s2" src="/static/img/moeda.png"></div>
+        <div class="slot"><img id="s3" src="/static/img/barra.png"></div>
+    </div>
+
+    <div id="grafico">R$ 0.00</div>
+
+    <button onclick="girar()">GIRAR 🎰</button>
+
+</div>
+
+<script>
+
+function animarGanho(valor){
+    let atual = 0;
+
+    let intervalo = setInterval(()=>{
+        atual += valor / 40;
+
+        if(atual >= valor){
+            atual = valor;
+            clearInterval(intervalo);
+        }
+
+        document.getElementById("grafico").innerText =
+            "R$ " + atual.toFixed(2);
+    }, 30);
+}
+
+function efeitoWin(){
+    let slots = document.querySelectorAll(".slot");
+
+    slots.forEach(s=>{
+        s.style.boxShadow = "0 0 25px gold";
+        s.style.transform = "scale(1.1)";
+    });
+
+    setTimeout(()=>{
+        slots.forEach(s=>{
+            s.style.boxShadow = "0 0 10px gold";
+            s.style.transform = "scale(1)";
+        });
+    },800);
+}
+
+function girar(){
+
+    // animação fake girando
+    let imagens = ["tigre.png","moeda.png","barra.png"];
+
+    let tempo = 10;
+
+    let intervalo = setInterval(()=>{
+        document.getElementById("s1").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
+        document.getElementById("s2").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
+        document.getElementById("s3").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
+
+        tempo--;
+
+        if(tempo <= 0){
+            clearInterval(intervalo);
+
+            // chama backend
+            fetch("/spin")
+            .then(r=>r.json())
+            .then(data=>{
+
+                document.getElementById("s1").src = "/static/img/" + data.resultado[0];
+                document.getElementById("s2").src = "/static/img/" + data.resultado[1];
+                document.getElementById("s3").src = "/static/img/" + data.resultado[2];
+
+                animarGanho(data.ganho);
+
+                if(data.ganho > 0){
+                    efeitoWin();
+                }
+            });
+        }
+
+    },100);
+}
+
+</script>
+
+</body>
+</html>
