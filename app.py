@@ -6,12 +6,8 @@ app = Flask(__name__)
 app.secret_key = "secreto"
 
 
+
 @app.route("/")
-def inicio():
-    return "Olá"
-
-
-@app.route("/cofre")
 def cofre():
     return render_template("index.html")
 
