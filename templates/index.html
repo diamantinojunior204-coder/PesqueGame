@@ -2,61 +2,149 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Mini Slot PG</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>🔐 Cofre Misterioso</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Orbitron',sans-serif;
+}
+
 body{
     background:#0f172a;
     color:white;
+    min-height:100vh;
+
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
-    font-family:Arial;
-}
 
-.container{
-    text-align:center;
-}
-
-.slots{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.slot{
-    width:100px;
-    height:100px;
-    background:#1a1a2e;
-    border-radius:15px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    box-shadow:0 0 10px gold;
     overflow:hidden;
 }
 
-.slot img{
-    width:80px;
-    transition:0.2s;
+/* fundo animado */
+body::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:
+    radial-gradient(circle,#16a34a22 10%,transparent 10%);
+    background-size:40px 40px;
+    animation:girar 20s linear infinite;
 }
 
-#grafico{
-    margin:15px;
-    font-size:28px;
-    color:gold;
-    text-shadow:0 0 10px yellow;
+@keyframes girar{
+    from{
+        transform:rotate(0deg);
+    }
+    to{
+        transform:rotate(360deg);
+    }
 }
 
-button{
-    padding:12px 25px;
-    font-size:18px;
+.container{
+    position:relative;
+    z-index:2;
+
+    background:rgba(15,23,42,0.95);
+
+    padding:40px 30px;
+
+    border-radius:20px;
+
+    width:90%;
+    max-width:400px;
+
+    text-align:center;
+
+    border:1px solid #22c55e;
+
+    box-shadow:0 0 25px rgba(34,197,94,0.3);
+}
+
+.cofre{
+    font-size:90px;
+    margin-bottom:20px;
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+    0%{ transform:scale(1);}
+    50%{ transform:scale(1.08);}
+    100%{ transform:scale(1);}
+}
+
+h1{
+    margin-bottom:15px;
+    color:#22c55e;
+}
+
+p{
+    color:#cbd5e1;
+    margin-bottom:25px;
+    line-height:1.5;
+}
+
+.botao{
+    background:linear-gradient(45deg,#22c55e,#15803d);
+
     border:none;
+
+    color:white;
+
+    padding:15px 25px;
+
     border-radius:10px;
-    background:gold;
+
+    font-size:16px;
+
     cursor:pointer;
+
+    transition:0.3s;
+
+    width:100%;
 }
+
+.botao:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px rgba(34,197,94,0.5);
+}
+
+#mensagem{
+    margin-top:25px;
+    padding:15px;
+    border-radius:10px;
+    background:#111827;
+    display:none;
+    line-height:1.5;
+}
+
+.pix{
+    margin-top:10px;
+    color:#22c55e;
+    font-weight:bold;
+    word-break:break-all;
+}
+
+.voltar{
+    display:block;
+    margin-top:25px;
+    color:#94a3b8;
+    text-decoration:none;
+}
+
+.voltar:hover{
+    color:white;
+}
+
 </style>
 </head>
 
@@ -64,87 +152,77 @@ button{
 
 <div class="container">
 
-    <div class="slots">
-        <div class="slot"><img id="s1" src="/static/img/tigre.png"></div>
-        <div class="slot"><img id="s2" src="/static/img/moeda.png"></div>
-        <div class="slot"><img id="s3" src="/static/img/barra.png"></div>
-    </div>
+    <div class="cofre">🔐</div>
 
-    <div id="grafico">R$ 0.00</div>
+    <h1>Cofre Misterioso</h1>
 
-    <button onclick="girar()">GIRAR 🎰</button>
+    <p>
+        Tente abrir o cofre por apenas <strong>R$ 1,00</strong>.
+        <br><br>
+        Será que você consegue desbloquear o prêmio?
+    </p>
+
+    <button class="botao" onclick="abrirCofre()">
+        🎰 TENTAR ABRIR
+    </button>
+
+    <div id="mensagem"></div>
+
+    <a class="voltar" href="/">
+        ⬅ Voltar ao cassino
+    </a>
 
 </div>
 
 <script>
 
-function animarGanho(valor){
-    let atual = 0;
+async function abrirCofre(){
 
-    let intervalo = setInterval(()=>{
-        atual += valor / 40;
+    let confirmar = confirm("Deseja tentar abrir o cofre por R$1,00?");
 
-        if(atual >= valor){
-            atual = valor;
-            clearInterval(intervalo);
-        }
+    if(!confirmar){
+        return;
+    }
 
-        document.getElementById("grafico").innerText =
-            "R$ " + atual.toFixed(2);
-    }, 30);
-}
+    const formData = new FormData();
+    formData.append("action","try_open");
 
-function efeitoWin(){
-    let slots = document.querySelectorAll(".slot");
+    try{
 
-    slots.forEach(s=>{
-        s.style.boxShadow = "0 0 25px gold";
-        s.style.transform = "scale(1.1)";
-    });
-
-    setTimeout(()=>{
-        slots.forEach(s=>{
-            s.style.boxShadow = "0 0 10px gold";
-            s.style.transform = "scale(1)";
+        const resposta = await fetch("/process_attempt",{
+            method:"POST",
+            body:formData
         });
-    },800);
-}
 
-function girar(){
+        const data = await resposta.json();
 
-    // animação fake girando
-    let imagens = ["tigre.png","moeda.png","barra.png"];
+        let mensagem = `
+            <div>${data.message}</div>
+        `;
 
-    let tempo = 10;
-
-    let intervalo = setInterval(()=>{
-        document.getElementById("s1").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
-        document.getElementById("s2").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
-        document.getElementById("s3").src = "/static/img/" + imagens[Math.floor(Math.random()*3)];
-
-        tempo--;
-
-        if(tempo <= 0){
-            clearInterval(intervalo);
-
-            // chama backend
-            fetch("/spin")
-            .then(r=>r.json())
-            .then(data=>{
-
-                document.getElementById("s1").src = "/static/img/" + data.resultado[0];
-                document.getElementById("s2").src = "/static/img/" + data.resultado[1];
-                document.getElementById("s3").src = "/static/img/" + data.resultado[2];
-
-                animarGanho(data.ganho);
-
-                if(data.ganho > 0){
-                    efeitoWin();
-                }
-            });
+        if(data.pix_key){
+            mensagem += `
+                <div class="pix">
+                    💳 PIX: ${data.pix_key}
+                </div>
+            `;
         }
 
-    },100);
+        const box = document.getElementById("mensagem");
+
+        box.style.display = "block";
+        box.innerHTML = mensagem;
+
+    }catch(erro){
+
+        document.getElementById("mensagem").style.display = "block";
+
+        document.getElementById("mensagem").innerHTML =
+        "❌ Erro ao conectar com o servidor.";
+
+        console.log(erro);
+    }
+
 }
 
 </script>
