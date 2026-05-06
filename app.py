@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, session
-
+session =True
 # CRIA O FLASK PRIMEIRO
 app = Flask(__name__)
 
