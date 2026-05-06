@@ -1,28 +1,30 @@
-from flask import Flask, render_template, jsonify
-import random
+@app.route("/process_attempt", methods=["POST"])
+def process_attempt():
+    
+    if "user_id" not in session:
+        return jsonify({"message": "Você precisa estar logado."})
 
-app = Flask(__name__)
+    user_id = session["user_id"]
 
-simbolos = ["tigre.png", "moeda.png", "barra.png"]
+    conn = conectar()
+    c = conn.cursor()
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+    # pegar saldo
+    c.execute("SELECT saldo FROM usuarios WHERE id=%s", (user_id,))
+    saldo = c.fetchone()[0]
 
-@app.route("/spin")
-def spin():
-    resultado = [random.choice(simbolos) for _ in range(3)]
+    if saldo >= 1:
+        # descontar
+        novo_saldo = saldo - 1
+        c.execute("UPDATE usuarios SET saldo=%s WHERE id=%s", (novo_saldo, user_id))
+        conn.commit()
 
-    # regra simples de ganho
-    if resultado[0] == resultado[1] == resultado[2]:
-        ganho = random.randint(50, 200)
+        import random
+        ganhou = random.choice([True, False])
+
+        if ganhou:
+            return jsonify({"message": "🎉 Você abriu o cofre!"})
+        else:
+            return jsonify({"message": "❌ Não foi dessa vez!"})
     else:
-        ganho = 0
-
-    return jsonify({
-        "resultado": resultado,
-        "ganho": ganho
-    })
-
-if __name__ == "__main__":
-    app.run()
+        return jsonify({"message": "Saldo insuficiente."})
