@@ -1,30 +1,42 @@
+from flask import Flask, render_template, request, jsonify, session
+
+# CRIA O FLASK PRIMEIRO
+app = Flask(__name__)
+
+app.secret_key = "secreto"
+
+
+@app.route("/")
+def inicio():
+    return "Olá"
+
+
+@app.route("/cofre")
+def cofre():
+    return render_template("index.html")
+
+
 @app.route("/process_attempt", methods=["POST"])
 def process_attempt():
-    
+
     if "user_id" not in session:
-        return jsonify({"message": "Você precisa estar logado."})
+        return jsonify({
+            "message":"Você precisa estar logado."
+        })
 
-    user_id = session["user_id"]
+    action = request.form.get("action")
 
-    conn = conectar()
-    c = conn.cursor()
+    if action == "try_open":
 
-    # pegar saldo
-    c.execute("SELECT saldo FROM usuarios WHERE id=%s", (user_id,))
-    saldo = c.fetchone()[0]
+        return jsonify({
+            "message":"Pague R$1,00 no PIX.",
+            "pix_key":"pix@diamante.com"
+        })
 
-    if saldo >= 1:
-        # descontar
-        novo_saldo = saldo - 1
-        c.execute("UPDATE usuarios SET saldo=%s WHERE id=%s", (novo_saldo, user_id))
-        conn.commit()
+    return jsonify({
+        "message":"Ação inválida"
+    })
 
-        import random
-        ganhou = random.choice([True, False])
 
-        if ganhou:
-            return jsonify({"message": "🎉 Você abriu o cofre!"})
-        else:
-            return jsonify({"message": "❌ Não foi dessa vez!"})
-    else:
-        return jsonify({"message": "Saldo insuficiente."})
+if __name__ == "__main__":
+    app.run(debug=True)
