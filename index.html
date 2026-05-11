@@ -33,7 +33,6 @@ body{
         #09111f,
         #000000
     );
-
     overflow:hidden;
 }
 
@@ -49,237 +48,145 @@ body{
 }
 
 @keyframes piscar{
-
     0%{opacity:0.2;}
     50%{opacity:1;}
     100%{opacity:0.2;}
-
 }
 
 /* LUA */
 
 #lua{
-
     position:absolute;
-
     width:120px;
-
     height:120px;
-
     border-radius:50%;
-
     background:#ddd;
-
     top:80px;
-
     right:40px;
-
     box-shadow:0 0 40px white;
-
     opacity:0;
-
     transition:1s;
-
 }
 
 /* TOPO */
 
 .topo{
-
     position:absolute;
-
     top:0;
-
     width:100%;
-
     height:60px;
-
     background:#0f172a;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     font-size:22px;
-
     font-weight:bold;
-
     z-index:20;
-
 }
 
 /* MULTI */
 
 #multi{
-
     position:absolute;
-
     top:90px;
-
     width:100%;
-
     text-align:center;
-
     font-size:70px;
-
     font-weight:bold;
-
     color:#22c55e;
-
     text-shadow:0 0 25px #22c55e;
-
     z-index:20;
-
 }
 
 /* STATUS */
 
 #status{
-
     position:absolute;
-
     top:170px;
-
     width:100%;
-
     text-align:center;
-
     font-size:20px;
-
     z-index:20;
-
 }
 
 /* FOGUETE */
 
 #foguete{
-
     position:absolute;
-
     width:80px;
-
     left:50%;
-
     bottom:100px;
-
     transform:translateX(-50%);
-
     transition:0.05s linear;
-
     z-index:15;
-
     filter:drop-shadow(0 0 20px orange);
-
 }
 
 /* FOGO */
 
 .fogo{
-
     position:absolute;
-
     width:20px;
-
     height:50px;
-
     background:linear-gradient(
         orange,
         red,
         transparent
     );
-
     left:50%;
-
     bottom:-35px;
-
     transform:translateX(-50%);
-
     border-radius:50%;
-
     animation:fogo 0.1s infinite;
-
 }
 
 @keyframes fogo{
-
     0%{height:35px;}
     50%{height:55px;}
     100%{height:30px;}
-
 }
 
 /* PAINEL */
 
 .painel{
-
     position:absolute;
-
     bottom:20px;
-
     width:100%;
-
     padding:15px;
-
     z-index:30;
-
 }
 
 input{
-
     width:100%;
-
     padding:16px;
-
     border:none;
-
     border-radius:12px;
-
     font-size:18px;
-
     margin-bottom:10px;
-
 }
 
 .botoes{
-
     display:flex;
-
     gap:10px;
-
 }
 
 button{
-
     flex:1;
-
     padding:16px;
-
     border:none;
-
     border-radius:12px;
-
     font-size:18px;
-
     font-weight:bold;
-
     color:white;
-
     cursor:pointer;
-
 }
 
 .apostar{
-
     background:#22c55e;
-
 }
 
 .sacar{
-
     background:#ef4444;
-
 }
 
 </style>
@@ -299,7 +206,7 @@ button{
 </div>
 
 <div id="status">
-Preparando lançamento...
+⏳ Aguardando aposta...
 </div>
 
 <!-- FOGUETE -->
@@ -372,11 +279,11 @@ for(let i=0;i<150;i++){
 
 }
 
-/* VARIAVEIS */
+/* VARIÁVEIS */
 
 let multiplicador = 1.00
 
-let rodando = true
+let rodando = false
 
 let apostado = false
 
@@ -384,16 +291,28 @@ let sacou = false
 
 let venceu = false
 
+let iniciou = false
+
 const foguete =
 document.getElementById("foguete")
 
-/* APOSTA */
+/* APOSTAR */
 
 function apostar(){
+
+    if(rodando) return
 
     apostado = true
 
     sacou = false
+
+    venceu = false
+
+    multiplicador = 1.00
+
+    rodando = true
+
+    iniciou = true
 
     document
     .getElementById("status")
@@ -508,7 +427,7 @@ function atualizarFases(){
 
 function loop(){
 
-    if(rodando){
+    if(rodando && iniciou){
 
         multiplicador *= 1.01
 
@@ -587,7 +506,7 @@ function novaMissao(){
 
     multiplicador = 1.00
 
-    rodando = true
+    rodando = false
 
     apostado = false
 
@@ -595,7 +514,7 @@ function novaMissao(){
 
     venceu = false
 
-    /* MULTI */
+    iniciou = false
 
     document
     .getElementById("multi")
@@ -607,20 +526,14 @@ function novaMissao(){
     .innerHTML =
     "1.00x"
 
-    /* STATUS */
-
     document
     .getElementById("status")
     .innerHTML =
-    "🚀 Nova missão"
-
-    /* LUA */
+    "⏳ Aguardando aposta..."
 
     document
     .getElementById("lua")
     .style.opacity = 0
-
-    /* FOGUETE */
 
     foguete.innerHTML = `
 
