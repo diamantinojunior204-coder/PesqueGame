@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aviator Pro</title>
+<title>Rocket Crash</title>
 
 <style>
 
@@ -15,9 +15,9 @@
 }
 
 body{
-    background:#0b1020;
-    font-family:Arial;
+    background:#050816;
     overflow:hidden;
+    font-family:Arial;
     color:white;
 }
 
@@ -28,7 +28,6 @@ body{
     width:100%;
     height:100%;
     overflow:hidden;
-    z-index:0;
 }
 
 .estrela{
@@ -37,7 +36,6 @@ body{
     height:2px;
     background:white;
     border-radius:50%;
-    opacity:0.7;
     animation:piscar 2s infinite;
 }
 
@@ -53,7 +51,7 @@ body{
     position:relative;
     z-index:20;
     height:60px;
-    background:#111827;
+    background:#0f172a;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -75,38 +73,73 @@ canvas{
     position:absolute;
     width:100%;
     height:100%;
-    z-index:1;
 }
 
-/* AVIÃO */
+/* FOGUETE */
 
-#aviao{
+#foguete{
     position:absolute;
     width:70px;
+    left:50%;
+    bottom:120px;
+    transform:translateX(-50%);
     z-index:10;
-    will-change:transform;
-    filter:drop-shadow(0 0 15px #fff);
+    filter:drop-shadow(0 0 20px orange);
+}
+
+/* FOGO */
+
+.fogo{
+    position:absolute;
+    width:18px;
+    height:40px;
+    background:linear-gradient(
+        orange,
+        red,
+        transparent
+    );
+    left:50%;
+    bottom:-30px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    animation:fogo 0.1s infinite;
+}
+
+@keyframes fogo{
+
+    0%{
+        height:35px;
+    }
+
+    50%{
+        height:50px;
+    }
+
+    100%{
+        height:30px;
+    }
+
 }
 
 /* MULTIPLICADOR */
 
 .multi{
     position:absolute;
-    top:20%;
+    top:12%;
     width:100%;
     text-align:center;
-    font-size:70px;
+    font-size:75px;
     font-weight:bold;
     color:#22c55e;
-    text-shadow:0 0 20px #22c55e;
+    text-shadow:0 0 25px #22c55e;
     z-index:20;
 }
 
-/* MENSAGEM */
+/* MSG */
 
 .msg{
     position:absolute;
-    top:10%;
+    top:5%;
     width:100%;
     text-align:center;
     font-size:22px;
@@ -114,16 +147,13 @@ canvas{
     z-index:20;
 }
 
-/* PAINEL */
+/* CONTROLES */
 
 .painel{
     position:absolute;
     bottom:20px;
     width:100%;
     padding:15px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
     z-index:20;
 }
 
@@ -133,7 +163,7 @@ input{
     border:none;
     border-radius:12px;
     font-size:18px;
-    outline:none;
+    margin-bottom:10px;
 }
 
 .botoes{
@@ -149,7 +179,6 @@ button{
     font-size:18px;
     font-weight:bold;
     color:white;
-    cursor:pointer;
 }
 
 .apostar{
@@ -160,32 +189,13 @@ button{
     background:#ef4444;
 }
 
-.historico{
-    position:absolute;
-    top:10px;
-    right:10px;
-    display:flex;
-    gap:5px;
-    z-index:30;
-    flex-wrap:wrap;
-    width:160px;
-    justify-content:flex-end;
-}
-
-.item{
-    background:#111827;
-    padding:6px 10px;
-    border-radius:8px;
-    font-size:14px;
-}
-
 @media(max-width:600px){
 
     .multi{
         font-size:55px;
     }
 
-    #aviao{
+    #foguete{
         width:55px;
     }
 
@@ -198,14 +208,12 @@ button{
 <div class="fundo" id="fundo"></div>
 
 <div class="topo">
-    ✈ AVIATOR PRO
+    🚀 ROCKET CRASH
 </div>
 
 <div class="area">
 
     <canvas id="grafico"></canvas>
-
-    <div class="historico" id="historico"></div>
 
     <div class="msg" id="msg"></div>
 
@@ -213,24 +221,43 @@ button{
         1.00x
     </div>
 
-    <!-- AVIÃO SVG -->
-    <img
-        id="aviao"
-        src="https://diamantinojunior204-coder.github.io/PesqueGame/avi.png"
-    >
+    <!-- FOGUETE -->
+
+    <div id="foguete">
+
+        <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
+        width="100%">
+
+        <div class="fogo"></div>
+
+    </div>
+
+    <!-- CONTROLES -->
 
     <div class="painel">
 
-        <input type="number" id="valor" placeholder="Digite o valor">
+        <input
+        type="number"
+        id="valor"
+        placeholder="Digite o valor">
 
         <div class="botoes">
 
-            <button class="apostar" onclick="apostar()">
+            <button
+            class="apostar"
+            onclick="apostar()">
+
                 Apostar
+
             </button>
 
-            <button class="sacar" onclick="sacar()">
+            <button
+            class="sacar"
+            onclick="sacar()">
+
                 Sacar
+
             </button>
 
         </div>
@@ -241,50 +268,65 @@ button{
 
 <script>
 
-const canvas = document.getElementById("grafico")
-const ctx = canvas.getContext("2d")
+const canvas =
+document.getElementById("grafico")
 
-function redimensionar(){
+const ctx =
+canvas.getContext("2d")
 
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+function resize(){
+
+    canvas.width =
+    window.innerWidth
+
+    canvas.height =
+    window.innerHeight
 
 }
 
-redimensionar()
+resize()
 
-window.addEventListener("resize", redimensionar)
-
-const aviao = document.getElementById("aviao")
+window.addEventListener(
+    "resize",
+    resize
+)
 
 let multiplicador = 1.00
+
 let crash = gerarCrash()
 
 let rodando = true
+
 let apostado = false
+
 let sacou = false
 
 let pontos = []
-let historico = []
+
+const foguete =
+document.getElementById("foguete")
 
 /* ESTRELAS */
 
-for(let i=0;i<80;i++){
+for(let i=0;i<100;i++){
 
-    let estrela = document.createElement("div")
+    let estrela =
+    document.createElement("div")
 
-    estrela.className = "estrela"
+    estrela.className =
+    "estrela"
 
     estrela.style.left =
-        Math.random() * 100 + "%"
+    Math.random()*100+"%"
 
     estrela.style.top =
-        Math.random() * 100 + "%"
+    Math.random()*100+"%"
 
     estrela.style.animationDelay =
-        Math.random() * 2 + "s"
+    Math.random()*2+"s"
 
-    document.getElementById("fundo")
+    document
+    .getElementById("fundo")
     .appendChild(estrela)
 
 }
@@ -294,7 +336,7 @@ for(let i=0;i<80;i++){
 function gerarCrash(){
 
     return (
-        Math.random() * 8 + 1.20
+        Math.random()*8+1.2
     ).toFixed(2)
 
 }
@@ -304,10 +346,13 @@ function gerarCrash(){
 function apostar(){
 
     apostado = true
+
     sacou = false
 
-    document.getElementById("msg")
-    .innerHTML = "APOSTA FEITA"
+    document
+    .getElementById("msg")
+    .innerHTML =
+    "🚀 LANÇAMENTO INICIADO"
 
 }
 
@@ -324,22 +369,26 @@ function sacar(){
     sacou = true
 
     let valor =
-        parseFloat(
-            document.getElementById("valor").value || 0
-        )
+    parseFloat(
+        document
+        .getElementById("valor")
+        .value || 0
+    )
 
     let ganho =
-        (valor * multiplicador).toFixed(2)
+    (valor * multiplicador)
+    .toFixed(2)
 
-    document.getElementById("msg")
+    document
+    .getElementById("msg")
     .innerHTML =
-        "VOCÊ SACOU R$ " + ganho
+    "💰 SACOU R$ " + ganho
 
 }
 
 /* GRAFICO */
 
-function desenharGrafico(){
+function desenhar(){
 
     ctx.clearRect(
         0,
@@ -351,19 +400,33 @@ function desenharGrafico(){
     ctx.beginPath()
 
     ctx.lineWidth = 5
-    ctx.strokeStyle = "#22c55e"
+
+    ctx.strokeStyle =
+    "#22c55e"
 
     ctx.shadowBlur = 20
-    ctx.shadowColor = "#22c55e"
+
+    ctx.shadowColor =
+    "#22c55e"
 
     for(let i=0;i<pontos.length;i++){
 
         let p = pontos[i]
 
-        if(i == 0){
-            ctx.moveTo(p.x,p.y)
+        if(i==0){
+
+            ctx.moveTo(
+                p.x,
+                p.y
+            )
+
         }else{
-            ctx.lineTo(p.x,p.y)
+
+            ctx.lineTo(
+                p.x,
+                p.y
+            )
+
         }
 
     }
@@ -372,49 +435,22 @@ function desenharGrafico(){
 
 }
 
-/* AVIÃO */
+/* FOGUETE */
 
-function atualizarAviao(){
-
-    let x = 50 + (multiplicador * 45)
+function atualizarFoguete(){
 
     let y =
-        (canvas.height * 0.72)
-        - (multiplicador * 30)
+    (canvas.height * 0.78)
+    - (multiplicador * 45)
 
-    if(x > canvas.width - 80){
-        x = canvas.width - 80
+    if(y < 50){
+
+        y = 50
+
     }
 
-    if(y < 70){
-        y = 70
-    }
-
-    aviao.style.transform =
-        `translate(${x}px, ${y}px)
-         rotate(-15deg)`
-
-}
-
-/* HISTORICO */
-
-function atualizarHistorico(){
-
-    let area =
-        document.getElementById("historico")
-
-    area.innerHTML = ""
-
-    historico.slice(-8).reverse()
-    .forEach(item=>{
-
-        area.innerHTML += `
-            <div class="item">
-                ${item}x
-            </div>
-        `
-
-    })
+    foguete.style.transform =
+    `translate(-50%, ${-multiplicador*45}px)`
 
 }
 
@@ -424,60 +460,61 @@ function loop(){
 
     if(rodando){
 
-        /* CURVA EXPONENCIAL */
         multiplicador *= 1.008
 
-        document.getElementById("multi")
+        document
+        .getElementById("multi")
         .innerHTML =
-            multiplicador.toFixed(2) + "x"
+        multiplicador.toFixed(2)
+        + "x"
 
         pontos.push({
 
-            x: 50 + (multiplicador * 45),
+            x: canvas.width/2,
 
             y:
-            (canvas.height * 0.78)
-            - (multiplicador * 30)
+            (canvas.height * 0.85)
+            - (multiplicador * 45)
 
         })
 
-        desenharGrafico()
+        desenhar()
 
-        atualizarAviao()
+        atualizarFoguete()
 
         if(multiplicador >= crash){
 
             rodando = false
 
-            historico.push(
-                multiplicador.toFixed(2)
-            )
+            document
+            .getElementById("multi")
+            .style.color =
+            "#ef4444"
 
-            atualizarHistorico()
+            foguete.innerHTML = "💥"
 
-            document.getElementById("multi")
-            .style.color = "#ef4444"
-
-            aviao.style.transform +=
-                " scale(1.3)"
-
-            document.getElementById("msg")
+            document
+            .getElementById("msg")
             .innerHTML =
-                "💥 CRASHOU EM "
-                + multiplicador.toFixed(2)
-                + "x"
+            "💥 EXPLODIU EM "
+            + multiplicador.toFixed(2)
+            + "x"
 
             if(apostado && !sacou){
 
-                document.getElementById("msg")
+                document
+                .getElementById("msg")
                 .innerHTML =
-                    "💥 VOCÊ PERDEU"
+                "💥 VOCÊ PERDEU"
 
             }
 
             navigator.vibrate?.(300)
 
-            setTimeout(reiniciar,3000)
+            setTimeout(
+                reiniciar,
+                3000
+            )
 
         }
 
@@ -503,13 +540,26 @@ function reiniciar(){
 
     pontos = []
 
-    aviao.style.transform =
-        "translate(50px, 400px) rotate(-15deg)"
+    foguete.innerHTML = `
 
-    document.getElementById("multi")
-    .style.color = "#22c55e"
+        <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
+        width="100%">
 
-    document.getElementById("msg")
+        <div class="fogo"></div>
+
+    `
+
+    foguete.style.transform =
+    "translateX(-50%)"
+
+    document
+    .getElementById("multi")
+    .style.color =
+    "#22c55e"
+
+    document
+    .getElementById("msg")
     .innerHTML = ""
 
 }
