@@ -1,110 +1,523 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini PG Teste</title>
+
+<title>Aviator Pro</title>
 
 <style>
-body{
+
+*{
     margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#0f172a;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#0b1020;
     font-family:Arial;
+    overflow:hidden;
     color:white;
 }
 
-.container{
-    text-align:center;
+/* FUNDO */
+
+.fundo{
+    position:absolute;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:0;
 }
 
-#grafico{
-    width:320px;
-    height:160px;
-    background:linear-gradient(180deg,#1a1a2e,#16213e);
-    border-radius:20px;
+.estrela{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    opacity:0.7;
+    animation:piscar 2s infinite;
+}
+
+@keyframes piscar{
+    0%{opacity:0.2;}
+    50%{opacity:1;}
+    100%{opacity:0.2;}
+}
+
+/* TOPO */
+
+.topo{
+    position:relative;
+    z-index:20;
+    height:60px;
+    background:#111827;
     display:flex;
-    justify-content:center;
     align-items:center;
-    box-shadow:0 0 20px gold;
-    margin-bottom:20px;
-    transition:0.3s;
+    justify-content:center;
+    font-size:22px;
+    font-weight:bold;
+    box-shadow:0 0 10px black;
 }
 
-#valor{
-    font-size:36px;
-    color:gold;
-    text-shadow:0 0 10px yellow;
+/* AREA */
+
+.area{
+    position:relative;
+    width:100%;
+    height:calc(100vh - 60px);
+    overflow:hidden;
+}
+
+canvas{
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:1;
+}
+
+/* AVIÃO */
+
+#aviao{
+    position:absolute;
+    width:70px;
+    z-index:10;
+    will-change:transform;
+    filter:drop-shadow(0 0 15px #fff);
+}
+
+/* MULTIPLICADOR */
+
+.multi{
+    position:absolute;
+    top:20%;
+    width:100%;
+    text-align:center;
+    font-size:70px;
+    font-weight:bold;
+    color:#22c55e;
+    text-shadow:0 0 20px #22c55e;
+    z-index:20;
+}
+
+/* MENSAGEM */
+
+.msg{
+    position:absolute;
+    top:10%;
+    width:100%;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    z-index:20;
+}
+
+/* PAINEL */
+
+.painel{
+    position:absolute;
+    bottom:20px;
+    width:100%;
+    padding:15px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:20;
+}
+
+input{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    outline:none;
+}
+
+.botoes{
+    display:flex;
+    gap:10px;
 }
 
 button{
-    padding:12px 25px;
-    font-size:18px;
+    flex:1;
+    padding:16px;
     border:none;
-    border-radius:10px;
-    background:gold;
-    color:black;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    color:white;
     cursor:pointer;
-    box-shadow:0 0 10px gold;
 }
 
-button:hover{
-    transform:scale(1.1);
+.apostar{
+    background:#22c55e;
 }
+
+.sacar{
+    background:#ef4444;
+}
+
+.historico{
+    position:absolute;
+    top:10px;
+    right:10px;
+    display:flex;
+    gap:5px;
+    z-index:30;
+    flex-wrap:wrap;
+    width:160px;
+    justify-content:flex-end;
+}
+
+.item{
+    background:#111827;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:14px;
+}
+
+@media(max-width:600px){
+
+    .multi{
+        font-size:55px;
+    }
+
+    #aviao{
+        width:55px;
+    }
+
+}
+
 </style>
-
 </head>
 <body>
 
-<div class="container">
-    <div id="grafico">
-        <div id="valor">R$ 0.00</div>
+<div class="fundo" id="fundo"></div>
+
+<div class="topo">
+    ✈ AVIATOR PRO
+</div>
+
+<div class="area">
+
+    <canvas id="grafico"></canvas>
+
+    <div class="historico" id="historico"></div>
+
+    <div class="msg" id="msg"></div>
+
+    <div class="multi" id="multi">
+        1.00x
     </div>
 
-    <button onclick="jogar()">GIRAR 🎰</button>
+    <!-- AVIÃO SVG -->
+    <img
+        id="aviao"
+        src="https://upload.wikimedia.org/wikipedia/commons/6/65/Red_plane_icon.png"
+    >
+
+    <div class="painel">
+
+        <input type="number" id="valor" placeholder="Digite o valor">
+
+        <div class="botoes">
+
+            <button class="apostar" onclick="apostar()">
+                Apostar
+            </button>
+
+            <button class="sacar" onclick="sacar()">
+                Sacar
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 <script>
-function animarGanho(valorFinal){
-    let atual = 0;
 
-    let intervalo = setInterval(()=>{
-        atual += valorFinal / 40;
+const canvas = document.getElementById("grafico")
+const ctx = canvas.getContext("2d")
 
-        if(atual >= valorFinal){
-            atual = valorFinal;
-            clearInterval(intervalo);
+function redimensionar(){
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+}
+
+redimensionar()
+
+window.addEventListener("resize", redimensionar)
+
+const aviao = document.getElementById("aviao")
+
+let multiplicador = 1.00
+let crash = gerarCrash()
+
+let rodando = true
+let apostado = false
+let sacou = false
+
+let pontos = []
+let historico = []
+
+/* ESTRELAS */
+
+for(let i=0;i<80;i++){
+
+    let estrela = document.createElement("div")
+
+    estrela.className = "estrela"
+
+    estrela.style.left =
+        Math.random() * 100 + "%"
+
+    estrela.style.top =
+        Math.random() * 100 + "%"
+
+    estrela.style.animationDelay =
+        Math.random() * 2 + "s"
+
+    document.getElementById("fundo")
+    .appendChild(estrela)
+
+}
+
+/* CRASH */
+
+function gerarCrash(){
+
+    return (
+        Math.random() * 8 + 1.20
+    ).toFixed(2)
+
+}
+
+/* APOSTAR */
+
+function apostar(){
+
+    apostado = true
+    sacou = false
+
+    document.getElementById("msg")
+    .innerHTML = "APOSTA FEITA"
+
+}
+
+/* SACAR */
+
+function sacar(){
+
+    if(!apostado) return
+
+    if(sacou) return
+
+    if(!rodando) return
+
+    sacou = true
+
+    let valor =
+        parseFloat(
+            document.getElementById("valor").value || 0
+        )
+
+    let ganho =
+        (valor * multiplicador).toFixed(2)
+
+    document.getElementById("msg")
+    .innerHTML =
+        "VOCÊ SACOU R$ " + ganho
+
+}
+
+/* GRAFICO */
+
+function desenharGrafico(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    )
+
+    ctx.beginPath()
+
+    ctx.lineWidth = 5
+    ctx.strokeStyle = "#22c55e"
+
+    ctx.shadowBlur = 20
+    ctx.shadowColor = "#22c55e"
+
+    for(let i=0;i<pontos.length;i++){
+
+        let p = pontos[i]
+
+        if(i == 0){
+            ctx.moveTo(p.x,p.y)
+        }else{
+            ctx.lineTo(p.x,p.y)
         }
 
-        document.getElementById("valor").innerText =
-            "R$ " + atual.toFixed(2);
-    }, 30);
-}
-
-function bigWin(){
-    let el = document.getElementById("grafico");
-
-    el.style.boxShadow = "0 0 50px gold";
-    el.style.transform = "scale(1.1)";
-
-    setTimeout(()=>{
-        el.style.boxShadow = "0 0 20px gold";
-        el.style.transform = "scale(1)";
-    },800);
-}
-
-function jogar(){
-    let valor = Math.random() * 200;
-
-    animarGanho(valor);
-
-    if(valor > 120){
-        bigWin();
     }
+
+    ctx.stroke()
+
 }
+
+/* AVIÃO */
+
+function atualizarAviao(){
+
+    let x = 50 + (multiplicador * 45)
+
+    let y =
+        (canvas.height * 0.72)
+        - (multiplicador * 30)
+
+    if(x > canvas.width - 80){
+        x = canvas.width - 80
+    }
+
+    if(y < 70){
+        y = 70
+    }
+
+    aviao.style.transform =
+        `translate(${x}px, ${y}px)
+         rotate(-15deg)`
+
+}
+
+/* HISTORICO */
+
+function atualizarHistorico(){
+
+    let area =
+        document.getElementById("historico")
+
+    area.innerHTML = ""
+
+    historico.slice(-8).reverse()
+    .forEach(item=>{
+
+        area.innerHTML += `
+            <div class="item">
+                ${item}x
+            </div>
+        `
+
+    })
+
+}
+
+/* LOOP */
+
+function loop(){
+
+    if(rodando){
+
+        /* CURVA EXPONENCIAL */
+        multiplicador *= 1.008
+
+        document.getElementById("multi")
+        .innerHTML =
+            multiplicador.toFixed(2) + "x"
+
+        pontos.push({
+
+            x: 50 + (multiplicador * 45),
+
+            y:
+            (canvas.height * 0.78)
+            - (multiplicador * 30)
+
+        })
+
+        desenharGrafico()
+
+        atualizarAviao()
+
+        if(multiplicador >= crash){
+
+            rodando = false
+
+            historico.push(
+                multiplicador.toFixed(2)
+            )
+
+            atualizarHistorico()
+
+            document.getElementById("multi")
+            .style.color = "#ef4444"
+
+            aviao.style.transform +=
+                " scale(1.3)"
+
+            document.getElementById("msg")
+            .innerHTML =
+                "💥 CRASHOU EM "
+                + multiplicador.toFixed(2)
+                + "x"
+
+            if(apostado && !sacou){
+
+                document.getElementById("msg")
+                .innerHTML =
+                    "💥 VOCÊ PERDEU"
+
+            }
+
+            navigator.vibrate?.(300)
+
+            setTimeout(reiniciar,3000)
+
+        }
+
+    }
+
+    requestAnimationFrame(loop)
+
+}
+
+/* REINICIAR */
+
+function reiniciar(){
+
+    multiplicador = 1.00
+
+    crash = gerarCrash()
+
+    rodando = true
+
+    apostado = false
+
+    sacou = false
+
+    pontos = []
+
+    aviao.style.transform =
+        "translate(50px, 400px) rotate(-15deg)"
+
+    document.getElementById("multi")
+    .style.color = "#22c55e"
+
+    document.getElementById("msg")
+    .innerHTML = ""
+
+}
+
+reiniciar()
+
+loop()
+
 </script>
 
 </body>
