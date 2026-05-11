@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Foguete Brasil</title>
+<title>Artemis Moon Mission</title>
 
 <style>
 
@@ -15,20 +15,29 @@
 }
 
 body{
-    background:#050816;
     overflow:hidden;
     font-family:Arial;
+    background:black;
     color:white;
 }
 
 /* FUNDO */
 
-.fundo{
+#ceu{
     position:absolute;
     width:100%;
     height:100%;
+    background:
+    linear-gradient(
+        to top,
+        #09111f,
+        #000000
+    );
+
     overflow:hidden;
 }
+
+/* ESTRELAS */
 
 .estrela{
     position:absolute;
@@ -40,164 +49,234 @@ body{
 }
 
 @keyframes piscar{
+
     0%{opacity:0.2;}
     50%{opacity:1;}
     100%{opacity:0.2;}
+
+}
+
+/* LUA */
+
+#lua{
+
+    position:absolute;
+
+    width:120px;
+
+    height:120px;
+
+    border-radius:50%;
+
+    background:#ddd;
+
+    top:80px;
+
+    right:40px;
+
+    box-shadow:0 0 40px white;
+
+    opacity:0;
+
+    transition:1s;
+
 }
 
 /* TOPO */
 
 .topo{
-    position:relative;
-    z-index:20;
-    height:60px;
-    background:#0f172a;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    font-weight:bold;
-    box-shadow:0 0 10px black;
-}
 
-/* AREA */
-
-.area{
-    position:relative;
-    width:100%;
-    height:calc(100vh - 60px);
-    overflow:hidden;
-}
-
-canvas{
     position:absolute;
+
+    top:0;
+
     width:100%;
-    height:100%;
+
+    height:60px;
+
+    background:#0f172a;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    z-index:20;
+
+}
+
+/* MULTI */
+
+#multi{
+
+    position:absolute;
+
+    top:90px;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:70px;
+
+    font-weight:bold;
+
+    color:#22c55e;
+
+    text-shadow:0 0 25px #22c55e;
+
+    z-index:20;
+
+}
+
+/* STATUS */
+
+#status{
+
+    position:absolute;
+
+    top:170px;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:20px;
+
+    z-index:20;
+
 }
 
 /* FOGUETE */
 
 #foguete{
+
     position:absolute;
-    width:70px;
+
+    width:80px;
+
     left:50%;
-    bottom:120px;
+
+    bottom:100px;
+
     transform:translateX(-50%);
-    z-index:10;
+
+    transition:0.05s linear;
+
+    z-index:15;
+
     filter:drop-shadow(0 0 20px orange);
+
 }
 
 /* FOGO */
 
 .fogo{
+
     position:absolute;
-    width:18px;
-    height:40px;
+
+    width:20px;
+
+    height:50px;
+
     background:linear-gradient(
         orange,
         red,
         transparent
     );
+
     left:50%;
-    bottom:-30px;
+
+    bottom:-35px;
+
     transform:translateX(-50%);
+
     border-radius:50%;
+
     animation:fogo 0.1s infinite;
+
 }
 
 @keyframes fogo{
 
-    0%{
-        height:35px;
-    }
-
-    50%{
-        height:50px;
-    }
-
-    100%{
-        height:30px;
-    }
+    0%{height:35px;}
+    50%{height:55px;}
+    100%{height:30px;}
 
 }
 
-/* MULTIPLICADOR */
-
-.multi{
-    position:absolute;
-    top:12%;
-    width:100%;
-    text-align:center;
-    font-size:75px;
-    font-weight:bold;
-    color:#22c55e;
-    text-shadow:0 0 25px #22c55e;
-    z-index:20;
-}
-
-/* MSG */
-
-.msg{
-    position:absolute;
-    top:5%;
-    width:100%;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-    z-index:20;
-}
-
-/* CONTROLES */
+/* PAINEL */
 
 .painel{
+
     position:absolute;
+
     bottom:20px;
+
     width:100%;
+
     padding:15px;
-    z-index:20;
+
+    z-index:30;
+
 }
 
 input{
+
     width:100%;
+
     padding:16px;
+
     border:none;
+
     border-radius:12px;
+
     font-size:18px;
+
     margin-bottom:10px;
+
 }
 
 .botoes{
+
     display:flex;
+
     gap:10px;
+
 }
 
 button{
+
     flex:1;
+
     padding:16px;
+
     border:none;
+
     border-radius:12px;
+
     font-size:18px;
+
     font-weight:bold;
+
     color:white;
+
 }
 
 .apostar{
+
     background:#22c55e;
+
 }
 
 .sacar{
+
     background:#ef4444;
-}
-
-@media(max-width:600px){
-
-    .multi{
-        font-size:55px;
-    }
-
-    #foguete{
-        width:55px;
-    }
 
 }
 
@@ -205,110 +284,70 @@ button{
 </head>
 <body>
 
-<div class="fundo" id="fundo"></div>
+<div id="ceu"></div>
+
+<div id="lua"></div>
 
 <div class="topo">
-    🚀 Brasil
+🚀 ARTEMIS MOON MISSION
 </div>
 
-<div class="area">
+<div id="multi">
+1.00x
+</div>
 
-    <canvas id="grafico"></canvas>
+<div id="status">
+Preparando lançamento...
+</div>
 
-    <div class="msg" id="msg"></div>
+<!-- FOGUETE -->
 
-    <div class="multi" id="multi">
-        1.00x
-    </div>
+<div id="foguete">
 
-    <!-- FOGUETE -->
+<img
+src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
+width="100%">
 
-    <div id="foguete">
+<div class="fogo"></div>
 
-        <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
-        width="100%">
+</div>
 
-        <div class="fogo"></div>
+<!-- CONTROLES -->
 
-    </div>
+<div class="painel">
 
-    <!-- CONTROLES -->
+<input
+type="number"
+id="valor"
+placeholder="Digite o valor">
 
-    <div class="painel">
+<div class="botoes">
 
-        <input
-        type="number"
-        id="valor"
-        placeholder="Digite o valor">
+<button
+class="apostar"
+onclick="apostar()">
 
-        <div class="botoes">
+Apostar
 
-            <button
-            class="apostar"
-            onclick="apostar()">
+</button>
 
-                Apostar
+<button
+class="sacar"
+onclick="sacar()">
 
-            </button>
+Sacar
 
-            <button
-            class="sacar"
-            onclick="sacar()">
+</button>
 
-                Sacar
-
-            </button>
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 
 <script>
 
-const canvas =
-document.getElementById("grafico")
-
-const ctx =
-canvas.getContext("2d")
-
-function resize(){
-
-    canvas.width =
-    window.innerWidth
-
-    canvas.height =
-    window.innerHeight
-
-}
-
-resize()
-
-window.addEventListener(
-    "resize",
-    resize
-)
-
-let multiplicador = 1.00
-
-let crash = gerarCrash()
-
-let rodando = true
-
-let apostado = false
-
-let sacou = false
-
-let pontos = []
-
-const foguete =
-document.getElementById("foguete")
-
 /* ESTRELAS */
 
-for(let i=0;i<100;i++){
+for(let i=0;i<150;i++){
 
     let estrela =
     document.createElement("div")
@@ -326,22 +365,27 @@ for(let i=0;i<100;i++){
     Math.random()*2+"s"
 
     document
-    .getElementById("fundo")
+    .getElementById("ceu")
     .appendChild(estrela)
 
 }
 
-/* CRASH */
+/* VARIAVEIS */
 
-function gerarCrash(){
+let multiplicador = 1.00
 
-    return (
-        Math.random()*8+1.2
-    ).toFixed(2)
+let rodando = true
 
-}
+let apostado = false
 
-/* APOSTAR */
+let sacou = false
+
+let venceu = false
+
+const foguete =
+document.getElementById("foguete")
+
+/* APOSTA */
 
 function apostar(){
 
@@ -350,7 +394,7 @@ function apostar(){
     sacou = false
 
     document
-    .getElementById("msg")
+    .getElementById("status")
     .innerHTML =
     "🚀 LANÇAMENTO INICIADO"
 
@@ -380,77 +424,86 @@ function sacar(){
     .toFixed(2)
 
     document
-    .getElementById("msg")
+    .getElementById("status")
     .innerHTML =
     "💰 SACOU R$ " + ganho
 
 }
 
-/* GRAFICO */
+/* FASES */
 
-function desenhar(){
+function atualizarFases(){
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    )
+    let status =
+    document.getElementById("status")
 
-    ctx.beginPath()
+    /* ATMOSFERA */
 
-    ctx.lineWidth = 5
+    if(multiplicador >= 2){
 
-    ctx.strokeStyle =
-    "#22c55e"
+        status.innerHTML =
+        "☁ Saindo da atmosfera"
 
-    ctx.shadowBlur = 20
+    }
 
-    ctx.shadowColor =
-    "#22c55e"
+    /* ESPAÇO */
 
-    for(let i=0;i<pontos.length;i++){
+    if(multiplicador >= 5){
 
-        let p = pontos[i]
+        status.innerHTML =
+        "🌌 Entrando no espaço"
 
-        if(i==0){
+    }
 
-            ctx.moveTo(
-                p.x,
-                p.y
-            )
+    /* ÓRBITA */
 
-        }else{
+    if(multiplicador >= 15){
 
-            ctx.lineTo(
-                p.x,
-                p.y
-            )
+        status.innerHTML =
+        "🛰 Órbita terrestre"
+
+    }
+
+    /* LUA */
+
+    if(multiplicador >= 30){
+
+        status.innerHTML =
+        "🌕 Aproximando da Lua"
+
+        document
+        .getElementById("lua")
+        .style.opacity = 1
+
+    }
+
+    /* CHEGOU */
+
+    if(multiplicador >= 50){
+
+        venceu = true
+
+        rodando = false
+
+        document
+        .getElementById("multi")
+        .style.color =
+        "#ffd700"
+
+        status.innerHTML =
+        "🏆 MISSÃO COMPLETA"
+
+        foguete.innerHTML =
+        "🌕"
+
+        if(apostado && !sacou){
+
+            status.innerHTML =
+            "🏆 PRÊMIO MÁXIMO!"
 
         }
 
     }
-
-    ctx.stroke()
-
-}
-
-/* FOGUETE */
-
-function atualizarFoguete(){
-
-    let y =
-    (canvas.height * 0.78)
-    - (multiplicador * 45)
-
-    if(y < 50){
-
-        y = 50
-
-    }
-
-    foguete.style.transform =
-    `translate(-50%, ${-multiplicador*45}px)`
 
 }
 
@@ -460,7 +513,7 @@ function loop(){
 
     if(rodando){
 
-        multiplicador *= 1.008
+        multiplicador *= 1.01
 
         document
         .getElementById("multi")
@@ -468,53 +521,61 @@ function loop(){
         multiplicador.toFixed(2)
         + "x"
 
-        pontos.push({
+        atualizarFases()
 
-            x: canvas.width/2,
+        /* MOVIMENTO */
 
-            y:
-            (canvas.height * 0.85)
-            - (multiplicador * 45)
+        let y =
+        multiplicador * 12
 
-        })
+        foguete.style.transform =
+        `translate(-50%, -${y}px)`
 
-        desenhar()
+        /* CRASH */
 
-        atualizarFoguete()
+        if(!venceu){
 
-        if(multiplicador >= crash){
+            let chance =
+            Math.random()
 
-            rodando = false
+            if(
+                multiplicador > 2
+                &&
+                chance < 0.002
+            ){
 
-            document
-            .getElementById("multi")
-            .style.color =
-            "#ef4444"
+                rodando = false
 
-            foguete.innerHTML = "💥"
-
-            document
-            .getElementById("msg")
-            .innerHTML =
-            "💥 EXPLODIU EM "
-            + multiplicador.toFixed(2)
-            + "x"
-
-            if(apostado && !sacou){
+                foguete.innerHTML =
+                "💥"
 
                 document
-                .getElementById("msg")
+                .getElementById("multi")
+                .style.color =
+                "#ef4444"
+
+                document
+                .getElementById("status")
                 .innerHTML =
-                "💥 VOCÊ PERDEU"
+                "💥 EXPLODIU"
+
+                if(apostado && !sacou){
+
+                    document
+                    .getElementById("status")
+                    .innerHTML =
+                    "💥 VOCÊ PERDEU"
+
+                }
+
+                navigator.vibrate?.(300)
+
+                setTimeout(
+                    reiniciar,
+                    4000
+                )
 
             }
-
-            navigator.vibrate?.(300)
-
-            setTimeout(
-                reiniciar,
-                3000
-            )
 
         }
 
@@ -530,23 +591,21 @@ function reiniciar(){
 
     multiplicador = 1.00
 
-    crash = gerarCrash()
-
     rodando = true
 
     apostado = false
 
     sacou = false
 
-    pontos = []
+    venceu = false
 
     foguete.innerHTML = `
 
-        <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
-        width="100%">
+    <img
+    src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Rocket_icon.svg/512px-Rocket_icon.svg.png"
+    width="100%">
 
-        <div class="fogo"></div>
+    <div class="fogo"></div>
 
     `
 
@@ -559,12 +618,20 @@ function reiniciar(){
     "#22c55e"
 
     document
-    .getElementById("msg")
-    .innerHTML = ""
+    .getElementById("multi")
+    .innerHTML =
+    "1.00x"
+
+    document
+    .getElementById("status")
+    .innerHTML =
+    "🚀 Nova missão"
+
+    document
+    .getElementById("lua")
+    .style.opacity = 0
 
 }
-
-reiniciar()
 
 loop()
 
