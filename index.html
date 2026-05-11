@@ -266,6 +266,8 @@ button{
 
     color:white;
 
+    cursor:pointer;
+
 }
 
 .apostar{
@@ -437,16 +439,12 @@ function atualizarFases(){
     let status =
     document.getElementById("status")
 
-    /* ATMOSFERA */
-
     if(multiplicador >= 2){
 
         status.innerHTML =
         "☁ Saindo da atmosfera"
 
     }
-
-    /* ESPAÇO */
 
     if(multiplicador >= 5){
 
@@ -455,16 +453,12 @@ function atualizarFases(){
 
     }
 
-    /* ÓRBITA */
-
     if(multiplicador >= 15){
 
         status.innerHTML =
         "🛰 Órbita terrestre"
 
     }
-
-    /* LUA */
 
     if(multiplicador >= 30){
 
@@ -476,8 +470,6 @@ function atualizarFases(){
         .style.opacity = 1
 
     }
-
-    /* CHEGOU */
 
     if(multiplicador >= 50){
 
@@ -502,6 +494,11 @@ function atualizarFases(){
             "🏆 PRÊMIO MÁXIMO!"
 
         }
+
+        setTimeout(
+            novaMissao,
+            4000
+        )
 
     }
 
@@ -546,8 +543,7 @@ function loop(){
 
                 rodando = false
 
-                foguete.innerHTML =
-                "💥"
+                foguete.innerHTML = "💥"
 
                 document
                 .getElementById("multi")
@@ -571,7 +567,7 @@ function loop(){
                 navigator.vibrate?.(300)
 
                 setTimeout(
-                    reiniciar,
+                    novaMissao,
                     4000
                 )
 
@@ -585,9 +581,9 @@ function loop(){
 
 }
 
-/* REINICIAR */
+/* NOVA MISSÃO */
 
-function reiniciar(){
+function novaMissao(){
 
     multiplicador = 1.00
 
@@ -598,6 +594,33 @@ function reiniciar(){
     sacou = false
 
     venceu = false
+
+    /* MULTI */
+
+    document
+    .getElementById("multi")
+    .style.color =
+    "#22c55e"
+
+    document
+    .getElementById("multi")
+    .innerHTML =
+    "1.00x"
+
+    /* STATUS */
+
+    document
+    .getElementById("status")
+    .innerHTML =
+    "🚀 Nova missão"
+
+    /* LUA */
+
+    document
+    .getElementById("lua")
+    .style.opacity = 0
+
+    /* FOGUETE */
 
     foguete.innerHTML = `
 
@@ -610,28 +633,13 @@ function reiniciar(){
     `
 
     foguete.style.transform =
-    "translateX(-50%)"
-
-    document
-    .getElementById("multi")
-    .style.color =
-    "#22c55e"
-
-    document
-    .getElementById("multi")
-    .innerHTML =
-    "1.00x"
-
-    document
-    .getElementById("status")
-    .innerHTML =
-    "🚀 Nova missão"
-
-    document
-    .getElementById("lua")
-    .style.opacity = 0
+    "translate(-50%, 0px)"
 
 }
+
+/* INICIAR */
+
+novaMissao()
 
 loop()
 
